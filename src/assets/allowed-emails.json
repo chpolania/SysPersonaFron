@@ -1,0 +1,22 @@
+[
+  {
+    "email": "laura.mendez@empresa-demo.example",
+    "name": "Laura Méndez",
+    "position": "Analista de operaciones"
+  },
+  {
+    "email": "diego.ramirez@empresa-demo.example",
+    "name": "Diego Ramírez",
+    "position": "Coordinador de proyectos"
+  },
+  {
+    "email": "sofia.castro@empresa-demo.example",
+    "name": "Sofía Castro",
+    "position": "Diseñadora de producto"
+  },
+  {
+    "email": "chpolania@gmail.com",
+    "name": "Christian Polania",
+    "position": "Analista de operaciones"
+  }
+]
