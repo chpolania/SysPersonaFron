@@ -10,7 +10,11 @@ export function ProfileChip({ person }: ProfileChipProps) {
       <span className="avatar">{person.name.charAt(0)}</span>
       <span>
         <strong>{person.name}</strong>
-        <small>{person.position}</small>
+        <small>Proceso: {person.position}</small>
+        {person.previousPosition &&
+          person.previousPosition !== 'Perfil de prueba' && (
+            <small>Cargo previo de referencia: {person.previousPosition}</small>
+          )}
       </span>
     </div>
   )

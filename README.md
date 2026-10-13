@@ -1,8 +1,8 @@
 # Portal de revisión de desempeño
 
 Aplicación para validar un correo corporativo, recopilar las funciones del
-último año, generar preguntas de seguimiento con OpenAI y evaluar las
-respuestas en relación con las funciones habituales del cargo.
+último año, generar preguntas de seguimiento con OpenAI y relacionar las
+actividades con funciones de referencia de los cargos.
 
 ## Lista de acceso
 
@@ -28,24 +28,34 @@ La interfaz sigue Atomic Design dentro de `src/`:
 
 `App.tsx` conserva el estado del flujo y selecciona la pantalla correspondiente.
 
-## Excel de ejemplo
+## Árbol de procesos y preguntas
 
-Los dos libros de ejemplo están en `src/assets/example-data/` y se leen en el
-servidor mediante ExcelJS:
+El archivo [`arbol_procesos_grupo_eterna.xlsx`](./src/assets/example-data/arbol_procesos_grupo_eterna.xlsx)
+conserva las hojas del libro recibido. La aplicación lee `Detalle` como
+jerarquía `Macroproceso → Proceso → Subproceso → Actividades`. Cada proceso
+funciona como una posición/rol y cada actividad como una función.
 
-- [`contexto_entrevista.xlsx`](./src/assets/example-data/contexto_entrevista.xlsx):
-  temas y contexto de la compañía, señales a explorar y ejemplos de preguntas
-  neutrales.
-- [`funciones_por_cargo.xlsx`](./src/assets/example-data/funciones_por_cargo.xlsx):
-  cargos, áreas y funciones habituales asociadas a cada cargo.
+Se añadió una hoja `Preguntas` con una pregunta numérica por actividad,
+asociada al código del macroproceso, proceso, subproceso y actividad. El ID de
+pregunta se forma con la jerarquía para permanecer único incluso si un código
+de actividad se repite en otro proceso. La descripción de la función conserva
+el texto del libro; la pregunta usa una plantilla fija, no una redacción de
+OpenAI. OpenAI únicamente selecciona de 3 a 5 `question_id` existentes. El
+servidor resuelve sus textos y códigos desde el libro tanto al mostrar las
+preguntas como al guardar las respuestas.
 
-Los registros son ficticios. Los nombres de cargo coinciden con los valores de
-`position` en la lista de acceso para relacionar las fuentes. OpenAI usa las
-funciones declaradas, el libro de funciones del cargo y el contexto para
-generar de 3 a 5 preguntas sobre las actividades descritas. Las respuestas
-son exclusivamente números enteros de 0 a 1000: la persona distribuye 1000
-puntos entre las preguntas según el tiempo o esfuerzo que dedicó a cada
-actividad.
+`allowed-emails.json` conserva las cuatro personas anteriores y añade perfiles
+de ejemplo para cubrir los 21 procesos. Cada `position` coincide con el nombre
+de proceso del Excel; `processId` conserva su código y `previousPosition`
+conserva el cargo original cuando existía. Los perfiles y asignaciones son de
+demostración: confirma las correspondencias de personas con Recursos Humanos
+antes de usar datos reales.
+
+Las respuestas son exclusivamente números enteros de 0 a 1000: la persona
+distribuye 1000 puntos entre las preguntas según el tiempo o esfuerzo que
+dedicó a cada actividad. La selección puede incluir preguntas relacionadas
+con otros cargos; la interfaz las señala como posibles actividades de otro
+rol, no como una conclusión definitiva.
 
 ## OpenAI y entorno
 
@@ -58,16 +68,27 @@ ninguna variable `VITE_*`: el navegador nunca debe recibirla.
 OPENAI_API_KEY=tu_clave_de_openai
 OPENAI_MODEL=gpt-5-nano
 PORT=3001
+OPENAI_QUESTIONS_SYSTEM_PROMPT='Eres un selector neutral y respetuoso. Selecciona entre 3 y 5 preguntas del banco...'
 ```
+
+El prompt selecciona preguntas del banco; no controla ni reescribe el texto de
+las preguntas. Puedes ajustar los criterios de selección en
+`OPENAI_QUESTIONS_SYSTEM_PROMPT`; la salida debe conservar el formato JSON con
+`question_ids`.
 
 El servidor expone `POST /api/interview/questions` y
 `POST /api/interview/answers`. En desarrollo, Vite reenvía `/api` al servidor
 Node. El formulario no permite enviar hasta que todas las respuestas sean
 enteros de 0 a 1000 y su suma sea exactamente 1000; el servidor vuelve a
-validar esas mismas reglas antes de aceptar la distribución. Los puntos
-representan la distribución que elige la persona, no una evaluación
-automatizada de su desempeño. Las respuestas no se persisten: solo se
-muestran en la sesión actual.
+validar esas mismas reglas antes de guardar la distribución. Cada envío se
+agrega a `server/data/interview-responses.xlsx`, en una fila por actividad.
+El libro registra el ID y nombre del proceso de la persona, su nombre y
+`position`, el `question_id` estable, el código de función, macroproceso y
+subproceso asociados, la actividad exacta, el rol asociado a ella y el número
+asignado. El servidor resuelve las respuestas contra los códigos y textos
+originales del Excel, sin confiar en textos o relaciones enviados por el
+navegador. Los puntos representan la distribución que elige la persona, no
+una evaluación automatizada de su desempeño.
 
 El límite por IP reduce solicitudes accidentales o abusivas, pero la lista de
 correos incluida en el frontend no es autenticación. Antes de producción,

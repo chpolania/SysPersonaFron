@@ -40,21 +40,57 @@ describe('flujo de revisión de desempeño', () => {
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          questions: [1, 2, 3].map((index) => ({
-            id: `question-${index}`,
-            question: `¿Cuántos puntos asignas a la actividad ${index}?`,
+          questions: [
+            ['Q-2-4-2-4-1-2-4-1-1', '2.4.1.1', 'Planificar el subproceso'],
+            ['Q-3-7-3-7-1-3-7-1-1', '3.7.1.1', 'Ejecutar proyectos estratégicos'],
+            ['Q-2-4-2-4-1-2-4-1-2', '2.4.1.2', 'Analizar requerimientos'],
+          ].map(([id, functionId, activity], index) => ({
+            id,
+            activity,
+            functionId,
+            functionName: activity,
+            subprocessId: `${id}-SUB`,
+            subprocessName: 'Subproceso de ejemplo',
+            question: `Pregunta exacta del Excel ${id}.`,
+            roleId: index === 1 ? '3.7' : '2.4',
+            roleName:
+              index === 1 ? '3.7 Gestión de Proyectos' : '2.4 Abastecimiento',
+            contextId: index === 1 ? '3' : '2',
+            contextName:
+              index === 1 ? '3. Apoyo' : '2. Misional',
+            personRoleId: '2.4',
           })),
         }),
       })
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          allocations: [100, 300, 600].map((answer, index) => ({
-            questionId: `question-${index + 1}`,
-            question: `¿Cuántos puntos asignas a la actividad ${index + 1}?`,
-            answer,
-            points: answer,
-          })),
+          allocations: [100, 300, 600].map((answer, index) => {
+            const isOtherRole = index === 1
+            return {
+              questionId: [
+                'Q-2-4-2-4-1-2-4-1-1',
+                'Q-3-7-3-7-1-3-7-1-1',
+                'Q-2-4-2-4-1-2-4-1-2',
+              ][index],
+              functionId: ['2.4.1.1', '3.7.1.1', '2.4.1.2'][index],
+              functionName: `Función ${index + 1}`,
+              subprocessId: `SUB-${index + 1}`,
+              subprocessName: `Subproceso ${index + 1}`,
+              question: `Pregunta exacta del Excel ${index + 1}.`,
+              activity: `Actividad de ejemplo ${index + 1}`,
+              roleId: isOtherRole ? '3.7' : '2.4',
+              roleName: isOtherRole
+                ? '3.7 Gestión de Proyectos'
+                : '2.4 Abastecimiento',
+              contextId: isOtherRole ? '3' : '2',
+              contextName: isOtherRole ? '3. Apoyo' : '2. Misional',
+              personRoleId: '2.4',
+              isOtherRole,
+              answer,
+              points: answer,
+            }
+          }),
           totalPoints: 1000,
         }),
       })
@@ -77,6 +113,9 @@ describe('flujo de revisión de desempeño', () => {
 
     const pointInputs = await screen.findAllByRole('spinbutton')
     expect(pointInputs).toHaveLength(3)
+    expect(
+      screen.getByText('Posible actividad de otro rol: 3.7 Gestión de Proyectos'),
+    ).toBeInTheDocument()
 
     const submitButton = screen.getByRole('button', {
       name: /enviar respuestas/i,
@@ -97,11 +136,20 @@ describe('flujo de revisión de desempeño', () => {
 
     expect(await screen.findByRole('status')).toHaveTextContent('1000')
     expect(screen.getByText('600 pts')).toBeInTheDocument()
+    expect(
+      screen.getByText('Posible actividad de otro rol: 3.7 Gestión de Proyectos'),
+    ).toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledTimes(2)
     const answerRequest = fetchMock.mock.calls[1]
     const requestBody = JSON.parse(answerRequest[1].body as string) as {
       answers: { answer: number }[]
+      questionIds: string[]
     }
+    expect(requestBody.questionIds).toEqual([
+      'Q-2-4-2-4-1-2-4-1-1',
+      'Q-3-7-3-7-1-3-7-1-1',
+      'Q-2-4-2-4-1-2-4-1-2',
+    ])
     expect(requestBody.answers.map(({ answer }) => answer)).toEqual([
       100, 300, 600,
     ])

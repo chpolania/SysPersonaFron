@@ -49,6 +49,24 @@ export function QuestionsForm({
       <div className="question-list">
         {questions.map((question, index) => (
           <div className="question-field" key={question.id}>
+            <p className="question-activity">
+              Función {question.functionId}: {question.activity}
+            </p>
+            <p className="question-context">
+              Subproceso {question.subprocessId}: {question.subprocessName}
+            </p>
+            <span
+              className={`scope-badge ${
+                question.roleId !== question.personRoleId ? 'is-outside' : ''
+              }`}
+            >
+              {question.roleId !== question.personRoleId
+                ? `Posible actividad de otro rol: ${question.roleName}`
+                : `Relacionada con tu rol: ${question.roleName}`}
+            </span>
+            <p className="question-context">
+              Macroproceso {question.contextId}: {question.contextName}
+            </p>
             <label htmlFor={question.id}>
               <span className="question-number">0{index + 1}</span>
               {question.question}

@@ -22,7 +22,17 @@ export function validatePointAnswers(questions, answers) {
         question.id.length === 0 ||
         typeof question.question !== 'string' ||
         question.question.length < 10 ||
-        question.question.length > 700,
+        question.question.length > 700 ||
+        typeof question.functionId !== 'string' ||
+        typeof question.functionName !== 'string' ||
+        typeof question.subprocessId !== 'string' ||
+        typeof question.subprocessName !== 'string' ||
+        typeof question.activity !== 'string' ||
+        typeof question.roleId !== 'string' ||
+        typeof question.roleName !== 'string' ||
+        typeof question.contextId !== 'string' ||
+        typeof question.contextName !== 'string' ||
+        typeof question.personRoleId !== 'string',
     )
   ) {
     throw invalidRequest('Las preguntas de la entrevista no son válidas.')
@@ -57,7 +67,18 @@ export function validatePointAnswers(questions, answers) {
 
     return {
       questionId: question.id,
+      functionId: question.functionId,
+      functionName: question.functionName,
+      subprocessId: question.subprocessId,
+      subprocessName: question.subprocessName,
       question: question.question,
+      activity: question.activity,
+      roleId: question.roleId,
+      roleName: question.roleName,
+      contextId: question.contextId,
+      contextName: question.contextName,
+      personRoleId: question.personRoleId,
+      isOtherRole: question.roleId !== question.personRoleId,
       answer: points,
       points,
     }

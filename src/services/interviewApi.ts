@@ -45,7 +45,7 @@ export async function submitInterviewAnswers(
 ): Promise<{ allocations: PointAllocation[]; totalPoints: number }> {
   return postJson('/api/interview/answers', {
     email: person.email,
-    questions,
+    questionIds: questions.map(({ id }) => id),
     answers,
   })
 }

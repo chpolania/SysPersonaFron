@@ -2,21 +2,148 @@
   {
     "email": "laura.mendez@empresa-demo.example",
     "name": "Laura Méndez",
-    "position": "Analista de operaciones"
+    "position": "2.4 Abastecimiento",
+    "processId": "2.4",
+    "previousPosition": "Analista de operaciones"
   },
   {
     "email": "diego.ramirez@empresa-demo.example",
     "name": "Diego Ramírez",
-    "position": "Coordinador de proyectos"
+    "position": "3.7 Gestión de Proyectos",
+    "processId": "3.7",
+    "previousPosition": "Coordinador de proyectos"
   },
   {
     "email": "sofia.castro@empresa-demo.example",
     "name": "Sofía Castro",
-    "position": "Diseñadora de producto"
+    "position": "2.2 Innovación y Desarrollo",
+    "processId": "2.2",
+    "previousPosition": "Diseñadora de producto"
   },
   {
     "email": "chpolania@gmail.com",
     "name": "Christian Polania",
-    "position": "Analista de operaciones"
+    "position": "2.5 Manufactura del Producto",
+    "processId": "2.5",
+    "previousPosition": "Analista de operaciones"
+  },
+  {
+    "email": "demo.estrategia@empresa-demo.example",
+    "name": "Persona Demo 01",
+    "position": "1.1 Gestión Estratégica",
+    "processId": "1.1",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.business-intelligence@empresa-demo.example",
+    "name": "Persona Demo 02",
+    "position": "1.2 Business Intelligence",
+    "processId": "1.2",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.asuntos-corporativos@empresa-demo.example",
+    "name": "Persona Demo 03",
+    "position": "1.3 Gestión de Asuntos Corporativos",
+    "processId": "1.3",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.mercadeo@empresa-demo.example",
+    "name": "Persona Demo 04",
+    "position": "2.1 Gestión de Mercadeo",
+    "processId": "2.1",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.comercializacion@empresa-demo.example",
+    "name": "Persona Demo 05",
+    "position": "2.3 Comercialización",
+    "processId": "2.3",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.mantenimiento@empresa-demo.example",
+    "name": "Persona Demo 06",
+    "position": "2.6 Gestión de Mantenimiento",
+    "processId": "2.6",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.distribucion@empresa-demo.example",
+    "name": "Persona Demo 07",
+    "position": "2.7 Distribución de PT",
+    "processId": "2.7",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.calidad@empresa-demo.example",
+    "name": "Persona Demo 08",
+    "position": "2.8 Aseguramiento de Calidad",
+    "processId": "2.8",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.gestion-humana@empresa-demo.example",
+    "name": "Persona Demo 09",
+    "position": "3.1 Gestión Humana",
+    "processId": "3.1",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.seguridad-salud@empresa-demo.example",
+    "name": "Persona Demo 10",
+    "position": "3.2 Gestión Seguridad y Salud en el Trabajo",
+    "processId": "3.2",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.gestion-ambiental@empresa-demo.example",
+    "name": "Persona Demo 11",
+    "position": "3.3 Gestión Ambiental",
+    "processId": "3.3",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.financiera@empresa-demo.example",
+    "name": "Persona Demo 12",
+    "position": "3.4 Gestión Financiera",
+    "processId": "3.4",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.servicios-administrativos@empresa-demo.example",
+    "name": "Persona Demo 13",
+    "position": "3.5 Servicios Administrativos",
+    "processId": "3.5",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.tecnologia@empresa-demo.example",
+    "name": "Persona Demo 14",
+    "position": "3.6 Gestión de TI",
+    "processId": "3.6",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.control-interno@empresa-demo.example",
+    "name": "Persona Demo 15",
+    "position": "4.1 Gestión de Control Interno",
+    "processId": "4.1",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.riesgos@empresa-demo.example",
+    "name": "Persona Demo 16",
+    "position": "4.2 Gestión de Riesgos",
+    "processId": "4.2",
+    "previousPosition": "Perfil de prueba"
+  },
+  {
+    "email": "demo.sig@empresa-demo.example",
+    "name": "Persona Demo 17",
+    "position": "4.3 Gestión de SIG",
+    "processId": "4.3",
+    "previousPosition": "Perfil de prueba"
   }
 ]

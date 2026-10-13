@@ -5,7 +5,12 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { rateLimit } from 'express-rate-limit'
 import { generateQuestions } from './interview-service.mjs'
-import { findRoleFunctions, loadInterviewData } from './interview-data.mjs'
+import {
+  findRoleFunctions,
+  loadInterviewData,
+  resolveQuestionIds,
+} from './interview-data.mjs'
+import { saveInterviewResults } from './interview-results.mjs'
 import { validatePointAnswers } from './scoring.mjs'
 
 const app = express()
@@ -41,6 +46,16 @@ function findAllowedPerson(email) {
   ) ?? null
 }
 
+function findPersonRoleId(person, roles) {
+  const matchingProcess = findRoleFunctions(roles, person.position)[0]
+  if (person.processId !== matchingProcess.role_id) {
+    throw new Error(
+      `La correspondencia de proceso en allowed-emails.json no es válida para "${person.email}".`,
+    )
+  }
+  return matchingProcess.role_id
+}
+
 app.get('/api/health', (_request, response) => {
   response.json({
     status: 'ok',
@@ -56,11 +71,11 @@ app.post('/api/interview/questions', async (request, response, next) => {
       return response.status(403).json({ error: 'El correo no tiene acceso a esta entrevista.' })
     }
 
-    const { context, roles } = await loadInterviewData()
-    const roleFunctions = findRoleFunctions(roles, person.position)
+    const { roles, questions: questionBank } = await loadInterviewData()
+    const personRoleId = findPersonRoleId(person, roles)
     const questions = await generateQuestions({
-      context,
-      roleFunctions,
+      questionBank,
+      personRoleId,
       description,
       position: person.position,
     })
@@ -73,13 +88,31 @@ app.post('/api/interview/questions', async (request, response, next) => {
 
 app.post('/api/interview/answers', async (request, response, next) => {
   try {
-    const { email, questions, answers } = request.body ?? {}
+    const { email, questionIds, answers } = request.body ?? {}
     const person = findAllowedPerson(email)
     if (!person) {
       return response.status(403).json({ error: 'El correo no tiene acceso a esta entrevista.' })
     }
 
-    const { allocations, totalPoints } = validatePointAnswers(questions, answers)
+    const { roles, questions: questionBank } = await loadInterviewData()
+    const personRoleId = findPersonRoleId(person, roles)
+    const canonicalQuestions = resolveQuestionIds(
+      questionIds,
+      questionBank,
+      personRoleId,
+    )
+    const { allocations, totalPoints } = validatePointAnswers(
+      canonicalQuestions,
+      answers,
+    )
+
+    await saveInterviewResults({
+      personRoleId,
+      personName: person.name,
+      personPosition: person.position,
+      personPreviousPosition: person.previousPosition || '',
+      allocations,
+    })
 
     return response.json({
       allocations,
@@ -109,6 +142,8 @@ app.use((error, _request, response, _next) => {
   const errorMessage =
     statusCode === 503 && error.message.includes('OPENAI_API_KEY')
       ? error.message
+      : error.code === 'INTERVIEW_RESULTS_SAVE_FAILED'
+        ? 'No se pudieron guardar las respuestas en el archivo Excel. Inténtalo de nuevo.'
       : 'No se pudo completar la solicitud de IA. Revisa la configuración del servidor e inténtalo de nuevo.'
   response.status(statusCode).json({
     error: statusCode >= 500 ? errorMessage : error.message,
